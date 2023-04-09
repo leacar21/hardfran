@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/leacar21/hardfran/scrape"
 )
 
 var db = make(map[string]string)
@@ -80,7 +81,16 @@ func setupRouter() *gin.Engine {
 			return
 		}
 
-		fmt.Println(body.Text)
+		fmt.Printf("Text: %s", body.Text)
+
+		listProducts := scrape.ScrapeSearchProducts(body.Text)
+
+		c.JSON(http.StatusOK, listProducts)
+	})
+
+	r.POST("/scrape", func(c *gin.Context) {
+
+		scrape.Scrape()
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
