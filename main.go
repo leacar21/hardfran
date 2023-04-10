@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/leacar21/hardfran/scrape"
@@ -81,9 +82,9 @@ func setupRouter() *gin.Engine {
 			return
 		}
 
-		fmt.Printf("Text: %s", body.Text)
+		fmt.Printf("Text: %s\n", body.Text)
 
-		listProducts := scrape.ScrapeSearchProducts(body.Text)
+		listProducts := scrape.ScrapeSearchProducts(strings.Replace(body.Text, " ", "%20", -1))
 
 		c.JSON(http.StatusOK, listProducts)
 	})

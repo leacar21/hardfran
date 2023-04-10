@@ -20,17 +20,15 @@ func ScrapeSearchProducts(text string) []Product {
 	// Instantiate default collector
 	c := colly.NewCollector(
 		// Visit only domains: scrapeme.live
-		colly.AllowedDomains("scrapeme.live"),
+		colly.AllowedDomains("www.amazon.com"),
 	)
 
 	// On every a element which has href attribute call callback
-	c.OnHTML("li.product", func(e *colly.HTMLElement) {
-
-		fmt.Println("li.product")
+	c.OnHTML("div[data-component-type=s-search-result]", func(e *colly.HTMLElement) {
 
 		product := Product{}
-		product.Name = e.ChildText("h2")
-		product.Price = e.ChildText(".price")
+		product.Name = e.ChildText("span.a-text-normal")
+		product.Price = e.ChildText("span.a-price-whole")
 
 		listProducts = append(listProducts, product)
 	})
@@ -41,7 +39,9 @@ func ScrapeSearchProducts(text string) []Product {
 	})
 
 	// Start scraping on https://scrapeme.live/shop/
-	c.Visit("https://scrapeme.live/shop/")
+
+	url := fmt.Sprintf("https://www.amazon.com/s?k=%s", text)
+	c.Visit(url)
 
 	//---------------
 
